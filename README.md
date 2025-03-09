@@ -1,3 +1,0 @@
-# OtusSpace
-
-ДЗ 2
