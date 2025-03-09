@@ -1,0 +1,118 @@
+version: '3.8'
+
+services:
+  db:
+    build: ./database
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: cosmic
+      POSTGRES_PASSWORD: cosmic
+      POSTGRES_DB: cosmic
+    networks:
+      - cosmic-battle
+
+  user-service:
+    build: ./backend/user-service
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://cosmic:cosmic@db:5432/cosmic
+    depends_on:
+      - db
+    networks:
+      - cosmic-battle
+
+  game-service:
+    build: ./backend/game-service
+    ports:
+      - "8001:8001"
+    environment:
+      DATABASE_URL: postgresql://cosmic:cosmic@db:5432/cosmic
+    depends_on:
+      - db
+    networks:
+      - cosmic-battle
+
+  tournament-service:
+    build: ./backend/tournament-service
+    ports:
+      - "8002:8002"
+    environment:
+      DATABASE_URL: postgresql://cosmic:cosmic@db:5432/cosmic
+    depends_on:
+      - db
+    networks:
+      - cosmic-battle
+
+  notification-service:
+    build: ./backend/notification-service
+    ports:
+      - "8003:8003"
+    environment:
+      DATABASE_URL: postgresql://cosmic:cosmic@db:5432/cosmic
+    depends_on:
+      - db
+    networks:
+      - cosmic-battle
+
+  agent-service:
+    build: ./backend/agent-service
+    ports:
+      - "8004:8004"
+    environment:
+      DATABASE_URL: postgresql://cosmic:cosmic@db:5432/cosmic
+    depends_on:
+      - db
+    networks:
+      - cosmic-battle
+
+  replay-service:
+    build: ./backend/replay-service
+    ports:
+      - "8005:8005"
+    environment:
+      DATABASE_URL: postgresql://cosmic:cosmic@db:5432/cosmic
+    depends_on:
+      - db
+    networks:
+      - cosmic-battle
+
+  rating-service:
+    build: ./backend/rating-service
+    ports:
+      - "8006:8006"
+    environment:
+      DATABASE_URL: postgresql://cosmic:cosmic@db:5432/cosmic
+    depends_on:
+      - db
+    networks:
+      - cosmic-battle
+
+  api-gateway:
+    build: ./backend/api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - user-service
+      - game-service
+      - tournament-service
+      - notification-service
+      - agent-service
+      - replay-service
+      - rating-service
+    networks:
+      - cosmic-battle
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - cosmic-battle
+
+networks:
+  cosmic-battle:
+    driver: bridge
